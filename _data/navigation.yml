@@ -1,0 +1,12 @@
+# main links
+main:
+  - title: "Malware Analysis"
+    url: /categories/#malware-analysis
+  - title: "Windows Internals"
+    url: /categories/#windows-internals
+  - title: "CTF Write-up"
+    url: /categories/#CTF Write-up
+  - title: "All categories"
+    url: /categories
+  - title: "About"
+    url: /about/me/
