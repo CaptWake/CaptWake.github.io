@@ -55,7 +55,6 @@ module.exports = class extends Component {
                                 __html: _p(`<time dateTime="${date_xml(page.date)}" title="${new Date(page.date).toLocaleString()}"> ${date(page.date)}</time>`)
                             }}></span>}
                             {/* Last Update Date */}
-                            <i class="far fa-calendar-check"></i>&nbsp;
                             {shouldShowUpdated && <span class="level-item" dangerouslySetInnerHTML={{
                                 __html: _p(`<time dateTime="${date_xml(page.updated)}" title="${new Date(page.updated).toLocaleString()}">${date(page.updated)}</time>`)
                             }}></span>}
