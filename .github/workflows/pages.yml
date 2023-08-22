@@ -34,7 +34,7 @@ jobs:
         run: |
           ls -la
           cp -u article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
-
+          cat node_modules/hexo-theme-icarus/layout/common/article.jsx
       - name: Commit modified file
         run: |
           git config user.name "GitHub Actions"
