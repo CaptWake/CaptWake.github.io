@@ -112,13 +112,13 @@ navbar:
         About: /about
     # Links to be shown on the right of the navigation bar
     links:
-        Download on GitHub:
-            icon: fab fa-github
-            url: https://github.com/CaptWake
+        #Download on GitHub:
+        #    icon: fab fa-github
+        #    url: https://github.com/CaptWake
 # Page footer configurations
 footer:
     # Copyright text
-    copyright: © 2019
+    # copyright: © 2019
     # Links to be shown on the right of the footer section
     links:
         Creative Commons:
@@ -127,9 +127,9 @@ footer:
         Attribution 4.0 International:
             icon: fab fa-creative-commons-by
             url: https://creativecommons.org/licenses/by/4.0/
-        Download on GitHub:
-            icon: fab fa-github
-            url: https://github.com/ppoffice/hexo-theme-icarus
+        #Download on GitHub:
+        #    icon: fab fa-github
+        #    url: https://github.com/ppoffice/hexo-theme-icarus
 # Article related configurations
 article:
     # Code highlight settings
@@ -292,17 +292,17 @@ widgets:
     # Recent posts widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar
-        position: left
+        position: right
         type: recent_posts
     # Archives widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar
-        position: left
+        position: right
         type: archives
     # Tags widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar
-        position: left
+        position: right
         type: tags
         # How to order tags. For example 'name' to order by name in ascending order, and '-length' to order by number of posts in each tags in descending order
         order_by: name
