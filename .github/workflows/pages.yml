@@ -30,6 +30,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
       
+      - name: Copy modified module file
+        run: cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
+
       - name: Commit modified file
         run: |
           git config user.name "GitHub Actions"
@@ -40,7 +43,7 @@ jobs:
 
       - name: Build
         run: npm run build
-
+      
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
