@@ -29,11 +29,18 @@ jobs:
             ${{ runner.OS }}-npm-cache
       - name: Install Dependencies
         run: npm install
+      
+      - name: Commit modified file
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update Icarus theme"
+          git push
+
       - name: Build
         run: npm run build
-        
-      - name: Post-Build
-        run: cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
