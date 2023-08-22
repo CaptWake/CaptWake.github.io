@@ -32,7 +32,7 @@ jobs:
       - name: Build
         run: npm run build
         
-      - name Post-Build
+      - name: Post-Build
         run: cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
