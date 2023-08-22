@@ -1,5 +1,6 @@
 ---
 title: Hello World
+date: 2020-01-10
 excerpt: This is a brief summary of your post that will be displayed on the main page.
 
 ---

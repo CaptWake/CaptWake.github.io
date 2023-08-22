@@ -5,6 +5,7 @@ date: 2020-09-26
 excerpt: Nowadays Emotet is a Trojan that is primarily spread through spam emails (malspam)...
 categories:
   - Malware Analysis
+toc: true
 ---
 # <u> What is Emotet? </u>
 

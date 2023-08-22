@@ -1,0 +1,56 @@
+widgets: 
+  # Profile widget configurations
+  -
+    # Where should the widget be placed, left sidebar or right sidebar
+    position: left
+    type: profile
+    # Author name
+    author: Stefano De Rosa
+    # Author title
+    author_title: Cybersecurity, Machine Learning
+    # Author's current location
+    location: Italy
+    # URL or path to the avatar image
+    avatar: https://avatars.githubusercontent.com/CaptWake
+    # Whether show the rounded avatar image
+    avatar_rounded: true
+    # Email address for the Gravatar
+    gravatar: 
+    # URL or path for the follow button
+    follow_link: https://github.com/CaptWake
+    # Links to be shown on the bottom of the profile widget
+    social_links:
+      Github:
+        icon: fab fa-github
+        url: https://github.com/CaptWake
+      #Facebook:
+      #    icon: fab fa-facebook
+      #    url: https://facebook.com
+      Twitter:
+        icon: fab fa-twitter
+        url: https://twitter.com/x00Bug
+    
+      Email:
+        icon: fas fa-envelope-square
+        url: "mailto:stefano.derosa@proton.me"
+  -
+    # Where should the widget be placed, left sidebar or right sidebar
+    position: left
+    type: toc
+    # Whether to show the index of each heading
+    index: true
+    # Whether to collapse sub-headings when they are out-of-view
+    collapsed: true
+    # Maximum level of headings to show (1-6)
+    depth: 3 
+    
+  -
+    # Where should the widget be placed, left sidebar or right sidebar
+    position: left
+    type: categories
+    
+sidebar:
+  # Left sidebar configurations
+  left:
+    # Whether the sidebar sticks to the top when page scrolls
+    sticky: true
