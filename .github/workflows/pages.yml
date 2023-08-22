@@ -35,13 +35,6 @@ jobs:
           ls -la
           cp -u article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
           cat node_modules/hexo-theme-icarus/layout/common/article.jsx
-      - name: Commit modified file
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Update Icarus theme"
-          git push
 
       - name: Build
         run: npm run build
