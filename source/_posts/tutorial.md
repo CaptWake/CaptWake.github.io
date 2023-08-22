@@ -38,4 +38,8 @@ More info: [Generating](https://hexo.io/docs/generating.html)
 $ hexo deploy
 ```
 
+### Using KateX to write LateX
+
+$$x^2 + \sqrt{\alpha \times \beta}$$
+
 More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
