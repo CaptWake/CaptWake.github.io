@@ -31,7 +31,9 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
-        # cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
+        
+      - name Post-Build
+        run: cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
