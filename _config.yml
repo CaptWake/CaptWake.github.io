@@ -5,7 +5,7 @@ keywords: null
 author: Stefano De Rosa
 language: en
 timezone: ''
-url: http://example.com
+url: https://CaptWake.github.io
 permalink: ':year/:month/:day/:title/'
 permalink_defaults: null
 pretty_urls:
