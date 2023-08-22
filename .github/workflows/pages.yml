@@ -31,7 +31,9 @@ jobs:
         run: npm install
       
       - name: Copy modified module file
-        run: cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
+        run: /
+          ls -la
+          cp article.jsx node_modules/hexo-theme-icarus/layout/common/article.jsx
 
       - name: Commit modified file
         run: |
