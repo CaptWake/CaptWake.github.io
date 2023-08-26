@@ -6,7 +6,7 @@ author: Stefano De Rosa
 language: en
 timezone: ''
 url: https://CaptWake.github.io
-permalink: ':year/:month/:day/:title/'
+permalink: ':category/:title/'
 permalink_defaults: null
 pretty_urls:
   trailing_index: true
