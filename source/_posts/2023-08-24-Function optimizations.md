@@ -37,7 +37,7 @@ $$
 
 In the machine learning literature, we often use the notation $J(\theta)$ or $\mathcal L(\theta)$ to denote the $f(x)$ loss function, where $\theta$ represents the parameters of the model that we want to optimize.
 
-The following code snippet shows an example of how could be implemented the gradient descent algorithm might be implemented:
+The following code snippet shows an example of how the gradient descent algorithm might be implemented:
 
 ```python
 for i in range(n_epochs):
@@ -45,11 +45,11 @@ for i in range(n_epochs):
 	params = params - learning_rate * params_grad
 ```
 
-Okay, now you might ask how we can efficiently compute the gradient for each each parameter, since the number of trainable parameters for some of the most used models like BERT have millions of parameters to optimize, and even bigger models like GPT-3 have billions of parameters!. 
+Okay, now you might ask how we can efficiently compute the gradient for each parameter, since the number of trainable parameters for some of the most used language models like BERT have millions of parameters to optimize, and even bigger models like GPT-3 have billions of parameters!. 
 To answer this question, we use a technique called backward mode differentiation (I will probably explain this in the next post of this machine learning series), the basic idea is to use the chain rule to compute the gradients with efficient matrix product multiplication.
 
 {% message color:warning title:Warning icon:"fa-solid fa-triangle-exclamation"%}
-An attentive reader might also notice that the gradients are computed using all the data, which could be memory expensive if we have a lot of data.
+A careful reader might also notice that the gradients are computed using all the data, which could be memory expensive if we have a lot of data.
 {% endmessage %}
 
 ## SGD
@@ -67,7 +67,7 @@ for i in range(nb_epochs):
 ```
 
 {% message color:primary title:Note icon:"fa-solid fa-magnifying-glass"%}
-    Since SGD performs parameter update for each sample in the dataset, these updates have an high variance, causing the objective function to fluctuate heavily. These fluctuation allow in some cases to escape the local minima by jumping to other new potentially better minima. On the other hand, this makes it difficult to converge to the exact minimum, as SGD will keep overshooting.
+    Since SGD performs parameter update for each sample in the dataset, these updates have an high variance, causing the objective function to fluctuate heavily. These fluctuations allow in some cases to escape the local minima by jumping to other new potentially better minima. On the other hand, this makes it difficult to converge to the exact minimum, as SGD will keep overshooting.
 {% endmessage %}
 
 ### Mini-Batch GD
@@ -81,13 +81,11 @@ for i in range(nb_epochs):
 		params_grad = compute_grads(loss_fn, batch, params) 
 		params = params - learning_rate * params_grad
 ```
-The larger the batch size, the more stable the convergence, and we can also efficiently compute batch parameter updates using scientific computing libraries such as pytorch, tensorflow, etc.
+The larger the batch size, the more stable the convergence, and we can also efficiently compute batch parameter updates using libraries such as pytorch, tensorflow, etc.
 
 ### Implementation
-All of the algorithms described above can be implemented in Python.
-Inspired by the pytorch notation, the deep learning training routine can be summarized in the following figure
-
-First, we define an interface called `Optimizer`, which defines two methods, `step()` and `zero_grad()`. The former is used to update the parameters and the latter is used to zero the gradients.
+All of the algorithms described above can be implemented in python.
+Inspired by the pytorch notation, we, first defined an interface called `Optimizer`, which defines two methods, `step()` and `zero_grad()`. The former is used to update the parameters and the latter is used to zero the gradients.
 
 ```python
 class Optimizer():
@@ -118,10 +116,10 @@ class SGD(Optimizer):
 			param.grad = torch.zeros_like(param)
 ```
 
-Now we can instanciate and integrate in the pytorch routine to optimize the model parameters. Note that this is a simple implementation of the algorithm, there are more efficient implementations also for sparse gradients.
+Now we can instantiate it and then integrate in the pytorch routine to optimize the model parameters. Note that this is a simple implementation of the algorithm, there are more efficient implementations also for sparse gradients.
 
 ## Adam
-The previous algorithms use a static learning rate defined a priori, we can do better. We can think of adapting the learning rate based on the surface. For example, if we have a steepest descent, we would increase the learning rate, and if there is a surface, we would decrease the learning rate instead. This is the basic idea behind the family of algorithms that extend the basic GD algorithm, one of which is Adaptive Moment Estimation (Adam).
+The previous algorithms use a static learning rate defined a priori, we can do better. We can think of adapting the learning rate based on the surface. For example, if we have a steepest descent, we would increase the learning rate, and if we are reaching a saddle point, we might decrease the learning rate instead. This is the basic idea behind the family of algorithms that extend the basic GD algorithm, one of which is Adaptive Moment Estimation (Adam).
 This algorithm computes an adaptive learning rate for each parameter based on the average first moment, also makes use of the average of the second moments of the gradients. 
 More in details, this algorithm calculates the exponential moving average of gradients and square gradients. And the parameters $\beta_1$ and $\beta_2$ are used to control the decay rates of these moving averages. We can decompose Adam as a combination of two gradient descent methods, Momentum, and RMSP (Root Mean Square Propagation).
 
@@ -132,7 +130,7 @@ m_t &= \beta_1 m_{t-1} + (1 - \beta_1) g_t \\\\
 v_t &= \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 
 \end{align}$$
 
-We can see that $m_t$ corresponds to the estimation of the mean and $v_t$ the variance not centered ($2$nd moment).
+We can see that $m_t$ corresponds to the estimation of the mean and $v_t$ the variance not centered (2nd moment).
 
 Now we can update the parameters using the following equation:
 
@@ -189,7 +187,7 @@ class Adam(Optimizer):
 ## AdamW
 The $L^2$ regularization is a classic method used to reduce overfitting. This method basically consists in adding the sum of squared parameters (weights) of the model to the loss function, multiplied by a given hyper-parameter $\lambda$ also called weight decay. We can formalize the $L^2$ regularization as follows:
 $$
-\tilde J(\theta; x, y) = J(\theta; x, y) + \lambda \sum_i \theta_i^2  
+\tilde J(\theta; x, y) = J(\theta; x, y) + \frac \lambda 2 \sum_i \theta_i^2  
 $$
 
 Instead of modifying the loss function, we could instead simply modify the update equation to also subtract a portion of the paramater when updating it using a tecnique called weight decay. The update function would be: 
@@ -198,10 +196,10 @@ $$
 $$ 
 
 {% message color:warning title:Warning icon:"fa-solid fa-triangle-exclamation"%}
-From the equation $\frac {\partial \theta^2} {\partial \theta_i} = 2 \theta_i $ we see how we subtract a little portion of the weight at each step, hence the name decay. This should be not confused with the $L^2$ regularization, although are similar in a way, they are only the same thing for vanilla SGD, but as soon as we add momentum, or use a more sophisticated optimizer like Adam become different.
+From the equation $\frac {\partial \theta^2} {\partial \theta_i} = 2 \theta_i $ we see how we subtract a little portion of the weight at each step, hence the name decay. This should be not confused with the $L^2$ regularization, although are similar in a way, they are only the same thing for vanilla SGD, but as soon as we add momentum, or use a more sophisticated optimizer like Adam, become different.
 {% endmessage %}
 
-So, we have two methods that we could use to avoid overfitting, which one is the best? Luckily Ilya Loshchilov and Frank Hutter answer this question suggesting in their article that we should prefer the weight decay with Adam (hence the name AdamW), instead of $L^2$ regularization.
+So, we have two methods that we could use to prevent overfitting, which one is the best? Luckily, Ilya Loshchilov and Frank Hutter answer this question suggesting in their [article](https://arxiv.org/abs/1711.05101) that we should prefer the weight decay with Adam (hence the name AdamW), instead of the $L^2$ regularization.
 
 ### Implementation 
 The implementation is straightforward, we only need to modify the `step()` method of the Adam optimizer adding the weight decay equation in line 24.
@@ -273,11 +271,14 @@ Next, we choose a random starting point and then run the SGD, Adam, and AdamW al
 {% endraw %}
 We can clearly see that Adam and AdamW, using the same parameters, choose the same path behaving in the same way, while SGD takes a different path that also stops far away from the local minimum with respect to the other algorithms. This highlights the advantage of adapting the learning rate instead of using a fixed learning rate.
 
-## Conclusions & Further Readings
-We have seen how the gradient descent can be used as a function optimizer. There are many optimizers in the wild, which one is better? There isn't a unique answer. Some algorithms work better than others. As a rule of thumb, if you have sparse data, is preferable to use optimizers with an adaptive learning rate. SGD is also used, in generally performs well, but can be slow in some scenarios.  
+In the following figure, we show how Adam outperform SGD on reaching the minima
 
-We have only scratched the surface of the gradient descent algorithms, there are other variants such as [RMSprop](https://optimization.cbe.cornell.edu/index.php?title=RMSProp), [AMSGrad](https://arxiv.org/pdf/1904.09237v1.pdf), [Adadelta](https://golden.com/wiki/Adadelta), etc. 
-It's also important to note that the gradient descent algorithm is not always the best optimization algorithm, there are other optimization algorithms that in some cases are more efficient and stable such as [KKT](https://en.wikipedia.org/wiki/Karush%E2%80%93Kuhn%E2%80%93Tucker_conditions) or [Newton's method](https://en.wikipedia.org/wiki/Newton's_method_in_optimization).
+![SGD vs Adam](/images/Machine_Learning/sgd_vs_adam.gif)
+
+## Conclusions & Further Readings
+We have seen how the gradient descent can be used as a function optimizer. There are many optimizers in the wild, which one is better? There isn't a unique answer. Some algorithms work better than others. As a rule of thumb, if you have sparse data, is preferable to use optimizers with an adaptive learning rate. SGD, generally, also performs well, but can be slow in certain scenarios. Selecting an appropriate learning rate, denoted as $\eta$, poses challenges: opting for a high value might lead to overshooting and missing the minima, whereas a lower value necessitates numerous steps to reach the minima. To tackle this issue, a methodology proposed in fastai, detailed in this [article](https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html), can be employed. Similarly, for effectively determining other hyperparameters, the 1cycle policy presents a valuable approach.
+
+We have only scratched the surface of the gradient descent algorithms. Numerous other variants exist, including [RMSprop](https://optimization.cbe.cornell.edu/index.php?title=RMSProp), [AMSGrad](https://arxiv.org/pdf/1904.09237v1.pdf), [Adadelta](https://golden.com/wiki/Adadelta), and more. It's important to acknowledge that gradient descent isn't always the optimal optimization algorithm. Alternatives, such as the [Karush–Kuhn–Tucker (KKT) conditions](https://en.wikipedia.org/wiki/Karush%E2%80%93Kuhn%E2%80%93Tucker_conditions) or [Newton's method](https://en.wikipedia.org/wiki/Newton's_method_in_optimization), can offer greater efficiency and stability in certain cases.
 
 ## References
 - https://www.offconvex.org/2016/03/22/saddlepoints/
