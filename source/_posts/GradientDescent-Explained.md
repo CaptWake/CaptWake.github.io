@@ -126,12 +126,11 @@ More in details, this algorithm calculates the exponential moving average of gra
 First we compute the decaying averages of past gradients and also squared denoted respectively as $m_t$ and $v_t$ as follows:
 
 $$\begin{align}
-# g_t represents the gradient
 m_t &= \beta_1 m_{t-1} + (1 - \beta_1) g_t \\\\
 v_t &= \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 
 \end{align}$$
 
-We can see that $m_t$ corresponds to the estimation of the mean and $v_t$ the variance not centered (2nd moment).
+where $g_t$ represents the gradient. We can see that $m_t$ corresponds to the estimation of the mean and $v_t$ the variance not centered (2nd moment).
 
 Now we can update the parameters using the following equation:
 
