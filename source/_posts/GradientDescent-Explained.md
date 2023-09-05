@@ -14,7 +14,7 @@ First of all let's define what is an optimization problem. An optimization task 
 
 The function $f(x)$ is also called *objective function*, *criterion*, or also *loss function*, *cost function*.
 
-Given a loss function $f(x)$, we can denote its slope at $x$ with $\frac {d y} {d x}$ or equivalently $f'(x)$ (its derivative). As we know the derivative tells us how much the function increases when we increase by a small step $\eta$. So if we want to minimize the loss function we have to move $x$ in the opposite direction described by the derivative of the loss function *w.r.t* $x$. This is the basic idea behind the gradient descent algorithm.
+Given a loss function $f(x)$, we can denote its slope at $x$ with $\frac {d y} {d x}$ or equivalently $f'(x)$ (its derivative). As we know the derivative tells us how much the function increases when we increase by a small step $\eta$ called *learning rate*. So if we want to minimize the loss function we have to move $x$ in the opposite direction described by the gradient of the loss function *w.r.t* $x$. This is the basic idea behind the gradient descent algorithm.
 
 But how do we search this minimum? If $f'(x) = 0$ the derivative gives no information about the direction to go, so it should be reasonable to consider it the minimum.
 
@@ -125,7 +125,8 @@ More in details, this algorithm calculates the exponential moving average of gra
 
 First we compute the decaying averages of past gradients and also squared denoted respectively as $m_t$ and $v_t$ as follows:
 
-$$\begin{align} 
+$$\begin{align}
+# g_t represents the gradient
 m_t &= \beta_1 m_{t-1} + (1 - \beta_1) g_t \\\\
 v_t &= \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 
 \end{align}$$
