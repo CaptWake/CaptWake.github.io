@@ -1,7 +1,7 @@
 ---
 title: Convolution Explained 
 date: 2023-08-31
-excerpt: This post talks about convolutions
+excerpt: What is a convolution? To answer this question, in this post you'll understand the convolution in different mathematical contexts and applications where it occours...
 categories:
   - Math Stuff
 toc: true
