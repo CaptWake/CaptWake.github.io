@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Understanding Convolutions - Personal Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Personal Blog"><meta name="msapplication-TileImage" content="/images/favicons/favicon.ico"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Personal Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="This post talks about convolutions"><meta property="og:type" content="blog"><meta property="og:title" content="Understanding Convolutions"><meta property="og:url" content="https://captwake.github.io/uncategorized/Understanding-Convolutions/"><meta property="og:site_name" content="Personal Blog"><meta property="og:description" content="This post talks about convolutions"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://captwake.github.io/images/Machine_Learning/ProbConv-fagb.png"><meta property="og:image" content="https://captwake.github.io/images/Machine_Learning/ProbConv-SumPaths.png"><meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/1/19/2D_Convolution_Animation.gif"><meta property="article:published_time" content="2023-08-31T00:00:00.000Z"><meta property="article:modified_time" content="2023-09-07T09:16:08.818Z"><meta property="article:author" content="Stefano De Rosa"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://captwake.github.io/images/Machine_Learning/ProbConv-fagb.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://captwake.github.io/uncategorized/Understanding-Convolutions/"},"headline":"Understanding Convolutions","image":["https://captwake.github.io/images/Machine_Learning/ProbConv-fagb.png","https://captwake.github.io/images/Machine_Learning/ProbConv-SumPaths.png","https://upload.wikimedia.org/wikipedia/commons/1/19/2D_Convolution_Animation.gif"],"datePublished":"2023-08-31T00:00:00.000Z","dateModified":"2023-09-07T09:16:08.818Z","author":{"@type":"Person","name":"Stefano De Rosa"},"publisher":{"@type":"Organization","name":"Personal Blog","logo":{"@type":"ImageObject","url":"https://captwake.github.io/images/favicons/favicon-16x16.png"}},"description":"This post talks about convolutions"}</script><link rel="canonical" href="https://captwake.github.io/uncategorized/Understanding-Convolutions/"><link rel="icon" href="/images/favicons/favicon.ico"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/images/favicons/favicon-16x16.png" alt="Personal Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item is-hidden-tablet catalogue" title="Catalogue" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-3 is-size-4-mobile">Understanding Convolutions</h1><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-alt"></i> <span class="level-item"><time dateTime="2023-08-31T00:00:00.000Z" title="8/31/2023, 12:00:00 AM"> 2023-08-31</time></span><span class="level-item"><i class="far fa-clock"></i>  9 minutes read</span></div></div><div class="content"><h2 id="What-is-a-Convolution"><a href="#What-is-a-Convolution" class="headerlink" title="What is a Convolution?"></a>What is a Convolution?</h2><p>To answer this question we can think of convolution as a simple operation that can be interpreted in different ways. In this post we’ll explore some mathematical contexts and applications where the convolution occours.</p>
+<h3 id="Probability-Theory"><a href="#Probability-Theory" class="headerlink" title="Probability Theory"></a>Probability Theory</h3><p>The first place where, in general, we start seeing the convolution as you probably don’t know is in probability. Consider two discrete random variables, $X$ and $Y$, each with their own probability distribution. How can we determine the distribution of their sum, denoted as $Z &#x3D; X + Y$? To be more precise, how do we define the probability that $Z$ equals a specific value, $z$, i.e., $P(Z &#x3D; z) &#x3D; P(X + Y &#x3D; z)$?<br>Let’s take a moment to explore a simple problem where we want to calculate the probability of obtaining a particular sum when rolling a pair of dice, each with six faces. If we view each die as a random variable, we can represent the probability distribution of their sum in a tabular format.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1</strong></td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+<td>$\frac 1 {36}$</td>
+</tr>
+</tbody></table>
+<p>Now if we want to find for instance know what is the probability that the sum of the dices is 6, we can simply sum the elements highlighted in red</p>
+
+<table>
+    <thead>
+    <tr>
+        <td></td>
+        <td><strong>1</strong></td>
+        <td><strong>2</strong></td>
+        <td><strong>3</strong></td>
+        <td><strong>4</strong></td>
+        <td><strong>5</strong></td>
+        <td><strong>6</strong></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><strong>1</strong></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td><span style="color:red">$\frac 1 {36}$</span></td>
+        <td>$\frac 1 {36}$</td>
+    </tr>
+    <tr>
+        <td><strong>2</strong></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td><span style="color:red">$\frac 1 {36}$</span></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+    </tr>
+    <tr>
+        <td><strong>3</strong></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td><span style="color:red">$\frac 1 {36}$</span></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+    </tr>
+    <tr>
+        <td><strong>4</strong></td>
+        <td>$\frac 1 {36}$</td>
+        <td><span style="color:red">$\frac 1 {36}$</span></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+    </tr>
+    <tr>
+        <td><strong>5</strong></td>
+        <td><span style="color:red">$\frac 1 {36}$</span></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+    </tr>
+    <tr>
+        <td><strong>6</strong></td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+        <td>$\frac 1 {36}$</td>
+    </tr>
+    <tbody>
+</table>
+
+
+<p>So $P(Z &#x3D; 6) &#x3D;  \frac 1 {36} + \frac 1 {36} + \frac 1 {36} + \frac 1 {36} + \frac 1 {36} &#x3D; \frac 5 {36}$<br>We can formalize this idea for an outcome $z \in [1,6]$ with the following formula:<br>$$<br>P(Z &#x3D; z) &#x3D; \sum_{i&#x3D;1}^6 P(X &#x3D; i) \cdot P(Y &#x3D; z-i)<br>$$</p>
+<p>This idea can be extended to continuous probability distributions as well. In this case, the formula becomes:<br>$$<br>p_Z(z) &#x3D; \int_{-\infty}^{+\infty}p_X(x) \cdot p_Y(z-x) \ dx<br>$$</p>
+<article class="message is-warning">
+        
+        <div class="message-body">
+            <p>These considerations are valid for $X$ and $Y$ independent random variables. </p>
+
+        </div>
+    </article>
+<p>The previous equation is the convolution definition. Now, let’s visualize this operation graphically.<br>Imagine we have two normal distributions, $X \sim \mathcal N(0, 1)$ and $Y \sim \mathcal N (2, 1)$, then draw their sum.</p>
+
+<canvas id="distribChart" width="400" height="200"></canvas>
+
+
+<p>We can see that the sum of these two random variables produces a distribution with the $X$ and $Y$ features combined. For instance, we have a huge peak in the region where $X$ and $Y$ have their respective peaks.</p>
+<p>Another interesting point of view is given by Christopher Olah in this <a target="_blank" rel="noopener" href="https://colah.github.io/posts/2014-07-Understanding-Convolutions/">post</a>, where we could ask what is the likelihood that a ball will travel a certain total distance $c$ after two successive drops from different heights, where each drop has its own probability distribution of distance traveled? This scenario is depicted in the image below, where $c &#x3D; a + b$.</p>
+<img src="/images/Machine_Learning/ProbConv-fagb.png" class="">
+
+<p>Then to get the convolution, we consider all the intermediate positions. </p>
+<img src="/images/Machine_Learning/ProbConv-SumPaths.png" class="">
+
+<h3 id="Digital-Signal-Processing"><a href="#Digital-Signal-Processing" class="headerlink" title="Digital Signal Processing"></a>Digital Signal Processing</h3><p>Convolution operations also find extensive use in signal processing, particularly in the context of audio signals. In audio signal processing, convolution acts as a crucial operation, functioning as a filter that operates on signal frequencies, effectively removing noise. This type of filter is referred to as a “convolutional filter,” and it can be described using the following formula:<br>$$<br>(f * g)(x) &#x3D; \int_{-\infty}^{+\infty} f(t) \cdot g(x - t) dt<br>$$<br>Here, the functions $f$ and $g$ can be interpreted as our signal and the respective filter. To illustrate this concept, let’s consider a practical example of filtering an <em>ECG</em> (Electrocardiogram) signal using a Gaussian window filter. To confirm the removal of unwanted frequencies effectively, we can apply the Fourier transform to the filtered signal. This allows us to visualize the frequencies present in the signal, these results are displayed in the <em>spectrum</em> tab.</p>
+<div class="tabs my-3 is-medium is-boxed">
+        <ul class="mx-0 my-0">
+            <li class="is-active">
+          <a href="#1">
+              <span class="icon is-small ml-0">
+                <i class="<icon>" aria-hidden="true"></i>
+            </span>signal
+          </a>
+      </li><li>
+          <a href="#2">
+              <span class="icon is-small ml-0">
+                <i class="<icon>" aria-hidden="true"></i>
+            </span>spectrum
+          </a>
+      </li>
+        </ul>
+    </div>
+    <div id="1" class="tab-content">
+          <p><canvas id="originalSignal" width="400" height="200"></canvas></p>
+
+      </div><div id="2" class="tab-content is-hidden">
+          <p><canvas id="spectrum" width="400" height="200"></canvas></p>
+
+      </div>
+
+
+<p>The convolution filter described earlier is called also <em>stationary filter</em> because it filters the frequencies independently for each sample in the signal. There are some more powerful filters called <em>dynamical filters</em> that allow us to filter the frequencies over time, using the Gabor transform.</p>
+<h3 id="Image-Processing"><a href="#Image-Processing" class="headerlink" title="Image Processing"></a>Image Processing</h3><p>In the field of computer vision, convolutions are commonly used to apply transformations to an image, typically this is achieved using a specific kernel (filter). </p>
+<article class="message is-info">
+        <div class="message-header"><p><i class="fa-solid fa-circle-info mr-2"></i>Gaussian kernel</p>
+</div>
+        <div class="message-body">
+            <p>A common used kernel for blurring is the <em>box blur kernel</em> (also known as gaussian kernel), defined as:</p>
+<p>$$<br>\frac 1 9<br>\begin{bmatrix}<br>1 &amp; 1 &amp; 1 \\<br>1 &amp; 1 &amp; 1 \\<br>1 &amp; 1 &amp; 1<br>\end{bmatrix}<br>$$</p>
+<p>This specific kernel approximate the gaussian smoothing process, where we blurr an image by a gaussian function, reducing the image’s high-frequncy component, acting like a low-pass filter. </p>
+
+        </div>
+    </article>
+
+<p>The following image summarizes the process of image convolution:</p>
+<p><a title="Michael Plotke, CC BY-SA 3.0 &lt;https://creativecommons.org/licenses/by-sa/3.0&gt;, via Wikimedia Commons" target="_blank" rel="noopener" href="https://commons.wikimedia.org/wiki/File:2D_Convolution_Animation.gif"><img width="256" alt="2D Convolution Animation" src="https://upload.wikimedia.org/wikipedia/commons/1/19/2D_Convolution_Animation.gif"></a></p>
+<article class="message is-primary">
+        <div class="message-header"><p><i class="fa-solid fa-magnifying-glass mr-2"></i>Note</p>
+</div>
+        <div class="message-body">
+            <p>In the context of deep learning, particularly in the Convolutional Neural Networks (CNNs), it’s worth noting that despite the name, the convolutional layers do not perform the convolution operation, but instead they compute an operation called <strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cross-correlation">cross-correlation</a></strong> which is very similar to convolution.</p>
+
+        </div>
+    </article>
+
+
+<h2 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h2><p>In this section, we’ll implement the 1D convolution operation for personal preference. It’s worth noting that the implementation for 2D convolution follows a very similar approach.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> floor, ceil</span><br><span class="line"><span class="keyword">from</span> numpy.typing <span class="keyword">import</span> ArrayLike</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">convolve</span>(<span class="params">a: ArrayLike, v: ArrayLike, mode=<span class="string">&#x27;full&#x27;</span></span>):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(a.shape) == <span class="number">1</span> <span class="keyword">and</span> <span class="built_in">len</span>(v.shape) == <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    p = <span class="number">0.0</span></span><br><span class="line">    a_ = <span class="literal">None</span></span><br><span class="line">    w, k = a.shape[<span class="number">0</span>], v.shape[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">match</span> mode:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;full&#x27;</span>:</span><br><span class="line">            p = k - <span class="number">1</span></span><br><span class="line">            a_ = np.pad(a, pad_width=p)</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;valid&#x27;</span>:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;same&#x27;</span>:</span><br><span class="line">            p = (k-<span class="number">1</span>)/<span class="number">2</span></span><br><span class="line">            a_ = np.pad(a, pad_width=ceil(p))</span><br><span class="line"></span><br><span class="line">    v_ = v[::-<span class="number">1</span>]</span><br><span class="line">    output_size = floor(w - k + <span class="number">2</span> * p + <span class="number">1</span>) </span><br><span class="line">    conv = np.zeros(output_size)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># do cross-correlation</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(output_size):</span><br><span class="line">        conv[i] = a_[i:i+k].dot(v_)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> conv</span><br></pre></td></tr></table></figure>
+<p>A downside of this approach is that this algorithm has a time complexity of $\mathcal O(n^2)$, making it not feasable for large number of samples. We can optimize it using the FFT algorithm, resulting in a better time complexity: $\mathcal O(n \cdot log(n))$. We can also compare our algorithm against the scipy convolution’s implementation with FFT, the results are shown in the following table.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>convolve (our implementation)</th>
+<th>convolve (numpy)</th>
+<th>fftconvolve (scipy)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>time complexity</td>
+<td>$\mathcal O (n^2)$</td>
+<td>$\mathcal O (n^2)$</td>
+<td>$\mathcal O (n\cdot log(n))$</td>
+</tr>
+<tr>
+<td>simulation (10k)</td>
+<td>77.7 ms</td>
+<td>37.3 ms</td>
+<td>3.42 ms</td>
+</tr>
+<tr>
+<td>simulation (1M)</td>
+<td>5.05 s</td>
+<td>3.23 s</td>
+<td>125 ms</td>
+</tr>
+</tbody></table>
+<p>We can observe that <code>fftconvolve</code> performs better than the naive convolution implementation, especially when dealing with a large volume of data. Additionally, it’s evident that the numpy implementation outperforms our custom one, mainly due to the fact that they have implemented the convolution routine in C.</p>
+<h2 id="Conclusion-Further-Readings"><a href="#Conclusion-Further-Readings" class="headerlink" title="Conclusion &amp; Further Readings"></a>Conclusion &amp; Further Readings</h2><p>In this post, we explored how convolution is rooted in various contexts, often interconnected. We also examined practical examples where convolution plays a crucial role. Finally we tried to implement the convolution operation for 1D signals using a naive approach. For those intrigued by an optimized approach utilizing the FFT algorithm, I recommend checking out this <a target="_blank" rel="noopener" href="https://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/">post</a>.</p>
+<p>Additionally, there are also graph convolutions, a topic we’ll delve into in future posts. These are fundamental to Graph Neural Networks (GNNs) and some of them are connected to the digital signal processing area through the Fourier transform. If you’re interested to uncover the Fourier transform and its workings, I invite you to watch this informative <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=spUNpyF58BY&vl=en">video</a>.</p>
+<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://colah.github.io/posts/2014-07-Understanding-Convolutions/">https://colah.github.io/posts/2014-07-Understanding-Convolutions/</a></li>
+<li><a target="_blank" rel="noopener" href="https://swharden.com/blog/2020-09-23-signal-filtering-in-python/">https://swharden.com/blog/2020-09-23-signal-filtering-in-python/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=KuXjwB4LzSA&t=2s">https://www.youtube.com/watch?v=KuXjwB4LzSA&amp;t=2s</a></li>
+</ul>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/javascript/Understanding_Convolutions/main.js"></script>
+
+</div><div class="article-licensing box"><div class="licensing-title"><p>Understanding Convolutions</p><p><a href="https://captwake.github.io/uncategorized/Understanding-Convolutions/">https://captwake.github.io/uncategorized/Understanding-Convolutions/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>Author</h6><p>Stefano De Rosa</p></div></div><div class="level-item is-narrow"><div><h6>Posted on</h6><p>2023-08-31</p></div></div><div class="level-item is-narrow"><div><h6>Updated on</h6><p>2023-09-07</p></div></div><div class="level-item is-narrow"><div><h6>Licensed under</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="sharethis-inline-share-buttons"></div><script src="https://platform-api.sharethis.com/js/sharethis.js#property=64e4c5da4265f4001221c982&amp;product=inline-share-buttons&amp;source=platform" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/Machine-Learning/GradientDescent-Explained/"><span class="level-item">Gradient Descent explained</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">Comments</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://captwake.github.io/uncategorized/Understanding-Convolutions/';
+            this.page.identifier = 'uncategorized/Understanding-Convolutions/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'personal-blog-u9zciprq1a' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://avatars.githubusercontent.com/CaptWake" alt="Stefano De Rosa"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Stefano De Rosa</p><p class="is-size-6 is-block">Cybersecurity, Machine Learning</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Italy</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Posts</p><a href="/archives"><p class="title">7</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Categories</p><a href="/categories"><p class="title">4</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/CaptWake" target="_blank" rel="noopener">Follow</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/CaptWake"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com/CaptWake"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:stefano.derosa@proton.me"><i class="fas fa-envelope-square"></i></a></div></div></div><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">Catalogue</h3><ul class="menu-list"><li><a class="level is-mobile" href="#What-is-a-Convolution"><span class="level-left"><span class="level-item">1</span><span class="level-item">What is a Convolution?</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#Probability-Theory"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">Probability Theory</span></span></a></li><li><a class="level is-mobile" href="#Digital-Signal-Processing"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">Digital Signal Processing</span></span></a></li><li><a class="level is-mobile" href="#Image-Processing"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">Image Processing</span></span></a></li></ul></li><li><a class="level is-mobile" href="#Implementation"><span class="level-left"><span class="level-item">2</span><span class="level-item">Implementation</span></span></a></li><li><a class="level is-mobile" href="#Conclusion-Further-Readings"><span class="level-left"><span class="level-item">3</span><span class="level-item">Conclusion &amp; Further Readings</span></span></a></li><li><a class="level is-mobile" href="#Resources"><span class="level-left"><span class="level-item">4</span><span class="level-item">Resources</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">Categories</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/CTF-Write-Up/"><span class="level-start"><span class="level-item">CTF Write-Up</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/Machine-Learning/"><span class="level-start"><span class="level-item">Machine Learning</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/Malware-Analysis/"><span class="level-start"><span class="level-item">Malware Analysis</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/Windows-Internals/"><span class="level-start"><span class="level-item">Windows Internals</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/images/favicons/favicon-16x16.png" alt="Personal Blog" height="28"></a><p class="is-size-7"><span>&copy; 2023 Stefano De Rosa</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "This website uses cookies to improve your experience.",
+          dismiss: "Got it!",
+          allow: "Allow cookies",
+          deny: "Decline",
+          link: "Learn more",
+          policy: "Cookie Policy",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script type="text/x-mathjax-config">MathJax.Hub.Config({
+            'HTML-CSS': {
+                matchFontHeight: false
+            },
+            SVG: {
+                matchFontHeight: false
+            },
+            CommonHTML: {
+                matchFontHeight: false
+            },
+            tex2jax: {
+                inlineMath: [
+                    ['$','$'],
+                    ['\\(','\\)']
+                ]
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script></body></html>
