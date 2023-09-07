@@ -1,4 +1,4 @@
-fetch('/data/Understanding_Convolutions/data.json')
+fetch('/data/Convolution-Explained/data.json')
     .then((response) => response.json())
     .then(
         (data) => {
@@ -54,7 +54,7 @@ fetch('/data/Understanding_Convolutions/data.json')
     });
 
 
-fetch('/data/Understanding_Convolutions/signal_data.json')
+fetch('/data/Convolution-Explained/signal_data.json')
     .then((response) => response.json())
     .then(
         (data) => {
@@ -96,7 +96,7 @@ fetch('/data/Understanding_Convolutions/signal_data.json')
             })
     });
 
-fetch('/data/Understanding_Convolutions/spectrum_data.json')
+fetch('/data/Convolution-Explained/spectrum_data.json')
     .then((response) => response.json())
     .then(
         (data) => {

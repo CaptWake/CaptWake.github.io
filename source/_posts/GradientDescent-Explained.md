@@ -255,7 +255,7 @@ In this section we test the implemented algorithms on a classical quadratic conv
     </script>
     <script type="text/javascript" src="/javascript/plotly.js"></script>
     <div id="c09f34dc-93b7-40fe-8ed7-9bfcf0885a75" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-    <script type="text/javascript" src="/javascript/Function_Optimization/display_quadratic.js"></script>
+    <script type="text/javascript" src="/javascript/GradientDescent-Explained/display_quadratic.js"></script>
 </div>
 {% endraw %}
 Next, we choose a random starting point and then run the SGD, Adam, and AdamW algorithms on this loss surface, using the same learning rate. The results are shown in the following figure
@@ -266,14 +266,14 @@ Next, we choose a random starting point and then run the SGD, Adam, and AdamW al
     </script>
     <script type="text/javascript" src="/javascript/plotly.js"></script>
     <div id="ad28c67e-8fa6-4e48-93d1-b7dc05743f25" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-    <script type="text/javascript" src="/javascript/Function_Optimization/sgd_vs_adam_vs_adamw.js"></script>
+    <script type="text/javascript" src="/javascript/GradientDescent-Explained/sgd_vs_adam_vs_adamw.js"></script>
 </div>
 {% endraw %}
 We can clearly see that Adam and AdamW, using the same parameters, choose the same path behaving in the same way, while SGD takes a different path that also stops far away from the local minimum with respect to the other algorithms. This highlights the advantage of adapting the learning rate instead of using a fixed learning rate.
 
 In the following figure, we show how Adam outperform SGD on reaching the minima
 
-![SGD vs Adam](/images/Machine_Learning/sgd_vs_adam.gif)
+![SGD vs Adam](/images/Machine_Learning/GradientDescent-Explained/sgd_vs_adam.gif)
 
 ## Conclusions & Further Readings
 We have seen how the gradient descent can be used as a function optimizer. There are many optimizers in the wild, which one is better? There isn't a unique answer. Some algorithms work better than others. As a rule of thumb, if you have sparse data, is preferable to use optimizers with an adaptive learning rate. SGD, generally, also performs well, but can be slow in certain scenarios. Selecting an appropriate learning rate, denoted as $\eta$, poses challenges: opting for a high value might lead to overshooting and missing the minima, whereas a lower value necessitates numerous steps to reach the minima. To tackle this issue, a methodology proposed in fastai, detailed in this [article](https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html), can be employed. Similarly, for effectively determining other hyperparameters, the 1cycle policy presents a valuable approach.

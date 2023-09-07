@@ -1,7 +1,9 @@
 ---
-title: Understanding Convolutions
+title: Convolution Explained 
 date: 2023-08-31
 excerpt: This post talks about convolutions
+categories:
+  - Math Stuff
 toc: true
 ---
 
@@ -121,11 +123,11 @@ We can see that the sum of these two random variables produces a distribution wi
 
 Another interesting point of view is given by Christopher Olah in this [post](https://colah.github.io/posts/2014-07-Understanding-Convolutions/), where we could ask what is the likelihood that a ball will travel a certain total distance $c$ after two successive drops from different heights, where each drop has its own probability distribution of distance traveled? This scenario is depicted in the image below, where $c = a + b$.
 
-{% img /images/Machine_Learning/ProbConv-fagb.png %}
+{% img /images/Math_Stuff/Convolution-Explained/ProbConv-fagb.png %}
 
 Then to get the convolution, we consider all the intermediate positions. 
 
-{% img /images/Machine_Learning/ProbConv-SumPaths.png %}
+{% img /images/Math_Stuff/Convolution-Explained/ProbConv-SumPaths.png %}
 
 ### Digital Signal Processing
 Convolution operations also find extensive use in signal processing, particularly in the context of audio signals. In audio signal processing, convolution acts as a crucial operation, functioning as a filter that operates on signal frequencies, effectively removing noise. This type of filter is referred to as a "convolutional filter," and it can be described using the following formula:
@@ -234,5 +236,5 @@ Additionally, there are also graph convolutions, a topic we'll delve into in fut
 
 {% raw %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/javascript/Understanding_Convolutions/main.js"></script>
+<script src="/javascript/Convolution-Explained/main.js"></script>
 {% endraw %}
